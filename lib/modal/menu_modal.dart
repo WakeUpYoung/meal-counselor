@@ -2,10 +2,12 @@ class MenuModal {
   int? id;
   String name;
   double weight;
+  int schemeId;
 
   MenuModal({
     required this.name,
     required this.weight,
+    required this.schemeId,
     this.id,
 });
 
@@ -14,11 +16,12 @@ class MenuModal {
       'id': id,
       'name': name,
       'weight': weight,
+      'schemeId': schemeId,
     };
   }
 
   @override
   String toString() {
-    return 'Menu{id: $id, name: $name, weight: $weight}';
+    return 'Menu{id: $id, name: $name, weight: $weight, scheme: $schemeId}';
   }
 }

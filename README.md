@@ -1,4 +1,4 @@
-# lunch_counselor
+# Meal Counselor
 
 A Flutter project. To decide what we need to eat
 

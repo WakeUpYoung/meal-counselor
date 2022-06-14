@@ -14,6 +14,7 @@ class MenuService {
         id: results[i]['id'],
         name: results[i]['name'],
         weight: results[i]['weight'],
+        schemeId: results[i]['schemeId'],
       );
     });
   }
@@ -50,29 +51,24 @@ class MenuService {
 
   static Future<void> dropTableIfExists() async {
     Database db = await menuDatabase();
-    await db.execute("""
+    return db.execute("""
       drop table if exists menu
     """);
-    return createTable();
-  }
-
-  static Future<void> createTable() async {
-    Database db = await menuDatabase();
-    return db.execute(
-        """create table menu(id integer primary key autoincrement, 
-            name text not null, 
-            weight real)"""
-    );
   }
 
   static Future<Database> menuDatabase() async {
     return openDatabase(
       join(await getDatabasesPath(), 'menu.db'),
       onCreate: (db, version) {
-        debugPrint('db created');
-        return createTable();
+        debugPrint('menu.db created');
+        return db.execute(
+            """create table menu(id integer primary key autoincrement, 
+            name text not null, 
+            weight real,
+            schemeId integer)"""
+        );
       },
-      version: 1,
+      version: 2,
     );
   }
 
