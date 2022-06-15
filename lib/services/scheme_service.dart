@@ -23,6 +23,15 @@ class SchemeService {
         conflictAlgorithm: ConflictAlgorithm.replace);
   }
 
+  static Future<void> updateScheme(SchemeModel modal) async {
+    final db = await schemeDatabase();
+    await db.update('scheme',
+        modal.toMap(),
+      where: 'id = ?',
+      whereArgs: [modal.id]);
+  }
+
+
   static Future<int> deleteScheme(int id) async {
     final db = await schemeDatabase();
     return db.delete('scheme',

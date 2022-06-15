@@ -22,7 +22,7 @@ class LunchRandomSelector extends StatefulWidget {
 class _RandomSelector extends State<LunchRandomSelector> {
   final _title = 'Lunch Counselor';
 
-  String _selectedLunch = 'Selector';
+  String _selectedLunch = 'Lunch !';
   int? _currentSchemeId;
 
   @override

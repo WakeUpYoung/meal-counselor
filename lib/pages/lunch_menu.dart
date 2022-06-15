@@ -86,13 +86,8 @@ class _LunchMenuState extends State<LunchMenu> {
                               .toUpperCase(),
                         ),
                       ),
-                      subtitle: Text(_menuList[index].schemeId.toString()),
                       title: Text(
                         _menuList[index].name,
-                        style: Theme
-                            .of(context)
-                            .textTheme
-                            .displayMedium,
                       ),
                       onLongPress: () {
                         MenuService.deleteMenu(_menuList[index].id!).then((
@@ -113,7 +108,7 @@ class _LunchMenuState extends State<LunchMenu> {
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton.large(
+      floatingActionButton: FloatingActionButton(
         child: const Icon(Icons.add),
         onPressed: () {
           _navigateToAdd(context);
