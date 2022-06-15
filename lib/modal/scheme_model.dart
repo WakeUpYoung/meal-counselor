@@ -1,8 +1,8 @@
-class SchemeModal {
+class SchemeModel {
   int? id;
   String name;
 
-  SchemeModal({
+  SchemeModel({
     required this.name,
     this.id
   });

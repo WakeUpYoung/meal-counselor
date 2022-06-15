@@ -1,10 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter/services.dart';
+import 'package:lunch_counselor/modal/provider_scheme.dart';
 import 'package:lunch_counselor/pages/main_page.dart';
+import 'package:provider/provider.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(
+      ChangeNotifierProvider(
+        create: (_) => SchemeProvider(),
+        child: const MyApp(),
+      )
+  );
   SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
 }
 
@@ -24,7 +31,11 @@ class MyApp extends StatelessWidget {
           secondary: const Color(0xfff4bfbf),
           background: Colors.white,
         ),
-        textTheme: GoogleFonts.sourceSansProTextTheme(),
+        textTheme: GoogleFonts.sourceSansProTextTheme().copyWith(
+          bodyText2: const TextStyle(
+            color: Colors.white
+          )
+        ),
         splashColor: const Color(0xFF6b93ab),
         floatingActionButtonTheme: themeData.floatingActionButtonTheme.copyWith(
           splashColor: const Color(0xffc19797)

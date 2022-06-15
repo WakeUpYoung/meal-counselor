@@ -1,10 +1,10 @@
-class MenuModal {
+class MenuModel {
   int? id;
   String name;
   double weight;
   int schemeId;
 
-  MenuModal({
+  MenuModel({
     required this.name,
     required this.weight,
     required this.schemeId,

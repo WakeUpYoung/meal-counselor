@@ -1,16 +1,18 @@
-import 'dart:math';
 import 'package:flutter/material.dart';
-import 'package:lunch_counselor/modal/menu_modal.dart';
+import 'package:lunch_counselor/components/scheme_picker.dart';
+import 'package:lunch_counselor/modal/menu_model.dart';
+import 'package:lunch_counselor/modal/provider_scheme.dart';
 import 'package:lunch_counselor/pages/add_menu_page.dart';
 import 'package:lunch_counselor/services/menu_service.dart';
+import 'package:lunch_counselor/utils/common_utils.dart';
+import 'package:provider/provider.dart';
 import 'main_page.dart';
 
-
 class LunchMenu extends StatefulWidget {
-
   final TitleChangeFunction titleChangeFunction;
 
-  const LunchMenu({Key? key, required this.titleChangeFunction}) : super(key: key);
+  const LunchMenu({Key? key, required this.titleChangeFunction})
+      : super(key: key);
 
   @override
   State createState() => _LunchMenuState();
@@ -19,12 +21,15 @@ class LunchMenu extends StatefulWidget {
 class _LunchMenuState extends State<LunchMenu> {
   final _refreshIndicatorKey = GlobalKey<RefreshIndicatorState>();
 
-  List<MenuModal> _data = [];
+  List<MenuModel> _menuList = [];
+  int? _currentSchemeId;
 
   @override
   void initState() {
     super.initState();
-    _refreshList();
+    _currentSchemeId = Provider
+        .of<SchemeProvider>(context, listen: false).currentSchemeId;
+    _refreshList(_currentSchemeId);
   }
 
   @override
@@ -36,35 +41,76 @@ class _LunchMenuState extends State<LunchMenu> {
       body: RefreshIndicator(
         key: _refreshIndicatorKey,
         onRefresh: () async {
-          return _refreshList();
+          return _refreshList(_currentSchemeId);
         },
-        child: ListView.separated(
-          itemCount: _data.length,
-          itemBuilder: (BuildContext context, int index) {
-            return ListTile(
-              leading: CircleAvatar(
-                backgroundColor: Theme.of(context).colorScheme.primary,
-                foregroundColor: Theme.of(context).colorScheme.onPrimary,
-                radius: Theme.of(context).textTheme.displayMedium!.fontSize,
-                child: Text(_data[index].name.characters
-                    .characterAt(0).toString().toUpperCase(),),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(16),
+              child: SchemePicker(
+                onChanged: (value) {
+                  setState(() {
+                    _currentSchemeId = value;
+                  });
+                  _refreshIndicatorKey.currentState?.show();
+                  _refreshList(_currentSchemeId);
+                },
               ),
-              title: Text(_data[index].name,
-                style: Theme.of(context).textTheme.displayMedium,),
-              onLongPress: () {
-                MenuService.deleteMenu(_data[index].id!)
-                    .then((effectRow) {
-                      if (effectRow == 1) {
-                        _refreshIndicatorKey.currentState?.show();
-                        _refreshList();
-                        _showSnackBar(context, 'Menu deleted');
-                      }
-                });
-              },
-              dense: true,
-            );
-          },
-          separatorBuilder: (BuildContext context, int index) => const Divider(),
+            ),
+            Expanded(
+                child: ListView.separated(
+                  itemCount: _menuList.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    return ListTile(
+                      leading: CircleAvatar(
+                        backgroundColor: Theme
+                            .of(context)
+                            .colorScheme
+                            .primary,
+                        foregroundColor: Theme
+                            .of(context)
+                            .colorScheme
+                            .onPrimary,
+                        radius: Theme
+                            .of(context)
+                            .textTheme
+                            .displayMedium!
+                            .fontSize,
+                        child: Text(
+                          _menuList[index]
+                              .name
+                              .characters
+                              .characterAt(0)
+                              .toString()
+                              .toUpperCase(),
+                        ),
+                      ),
+                      subtitle: Text(_menuList[index].schemeId.toString()),
+                      title: Text(
+                        _menuList[index].name,
+                        style: Theme
+                            .of(context)
+                            .textTheme
+                            .displayMedium,
+                      ),
+                      onLongPress: () {
+                        MenuService.deleteMenu(_menuList[index].id!).then((
+                            effectRow) {
+                          if (effectRow == 1) {
+                            _refreshIndicatorKey.currentState?.show();
+                            _refreshList(_currentSchemeId);
+                            CommonUtils.showSnackBar(context, 'Menu deleted');
+                          }
+                        });
+                      },
+                      dense: true,
+                    );
+                  },
+                  separatorBuilder: (BuildContext context, int index) =>
+                  const Divider(),
+                )),
+          ],
         ),
       ),
       floatingActionButton: FloatingActionButton.large(
@@ -74,33 +120,25 @@ class _LunchMenuState extends State<LunchMenu> {
         },
       ),
     );
-
   }
 
   Future<void> _navigateToAdd(BuildContext context) async {
     final result = await Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => const AddMenuPage())
-    );
-    _showSnackBar(context, result != null ? 'Added $result' : 'Cancel add');
+        context, MaterialPageRoute(builder: (context) => const AddMenuPage()));
+    CommonUtils.showSnackBar(
+        context, result != null ? 'Added $result' : 'Cancel add');
     debugPrint('Added $result');
     _refreshIndicatorKey.currentState?.show();
-    _refreshList();
+    _refreshList(_currentSchemeId);
   }
 
-  void _showSnackBar(BuildContext context, String text) {
-    ScaffoldMessenger.of(context)
-      ..removeCurrentSnackBar()
-      ..showSnackBar(SnackBar(content: Text(text)));
-  }
-  
-  void _refreshList() {
-    MenuService.listMenu()
-    .then((value) => {
+
+  void _refreshList(int? schemeId) {
+    MenuService.listMenu(schemeId).then((value) =>
+    {
       setState(() {
-        _data = value;
+        _menuList = value;
       })
     });
   }
-
 }
