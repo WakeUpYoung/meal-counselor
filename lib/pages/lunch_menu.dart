@@ -72,11 +72,6 @@ class _LunchMenuState extends State<LunchMenu> {
                             .of(context)
                             .colorScheme
                             .onPrimary,
-                        radius: Theme
-                            .of(context)
-                            .textTheme
-                            .displayMedium!
-                            .fontSize,
                         child: Text(
                           _menuList[index]
                               .name
@@ -99,7 +94,7 @@ class _LunchMenuState extends State<LunchMenu> {
                           }
                         });
                       },
-                      dense: true,
+                      dense: false,
                     );
                   },
                   separatorBuilder: (BuildContext context, int index) =>

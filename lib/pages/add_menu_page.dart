@@ -64,7 +64,7 @@ class AddMenuPageState extends State<AddMenuPage> {
                     return null;
                   },
                   decoration: const InputDecoration(
-                    prefixIcon: Icon(Icons.insert_emoticon),
+                    prefixIcon: Icon(Icons.ramen_dining_outlined),
                     labelText: 'Food Name',
                     border: OutlineInputBorder(),
                   ),
@@ -72,20 +72,30 @@ class AddMenuPageState extends State<AddMenuPage> {
                     _foodName = value;
                   },
                 ),
-                Slider(
-                    value: _weight,
-                    max: 2,
-                    thumbColor: _weightValid
-                        ? Theme.of(context).colorScheme.primary
-                        : Theme.of(context).colorScheme.error,
-                    label: _weight.toString(),
-                    divisions: 20,
-                    onChanged: (double newVal) {
-                      setState(() {
-                        _weight = newVal;
-                        _weightValid = newVal >= 0.1;
-                      });
-                    }),
+                Row(
+                  children: [
+                    Icon(Icons.casino_outlined,
+                      color: _weightValid
+                          ? Theme.of(context).colorScheme.primary
+                          : Theme.of(context).colorScheme.error,),
+                    Expanded(
+                      child:
+                        Slider(
+                            value: _weight,
+                            max: 2,
+                            thumbColor: _weightValid
+                                ? Theme.of(context).colorScheme.primary
+                                : Theme.of(context).colorScheme.error,
+                            label: _weight.toString(),
+                            divisions: 20,
+                            onChanged: (double newVal) {
+                              setState(() {
+                                _weight = newVal;
+                                _weightValid = newVal >= 0.1;
+                              });
+                            })),
+                  ],
+                ),
                 Wrap(
                   spacing: 8.0,
                   runSpacing: 4.0,
@@ -105,7 +115,8 @@ class AddMenuPageState extends State<AddMenuPage> {
                             : Theme.of(context).colorScheme.primary,
                         onDeleted: _selectedSchemeChip == index
                             ? () {
-                                _showSaveDialog(context, 'Update Scheme', () {
+                                _showSaveDialog(context, 'Update Scheme',
+                                    _schemeList[index].name, () {
                                   _updateScheme(
                                       _updatingSchemeName, _selectedSchemeId!);
                                 }, (value) {
@@ -143,7 +154,7 @@ class AddMenuPageState extends State<AddMenuPage> {
                             color: Theme.of(context).colorScheme.primary),
                       ),
                       onPressed: () {
-                        _showSaveDialog(context, 'New Scheme', () {
+                        _showSaveDialog(context, 'New Scheme', '', () {
                           _saveScheme(_newSchemeName);
                         }, (value) {
                           setState(() {
@@ -193,6 +204,7 @@ class AddMenuPageState extends State<AddMenuPage> {
   Future _showSaveDialog(
       BuildContext context,
       String title,
+      String initialValue,
       VoidCallback onPressCallback,
       ValueChanged<String> onValueChange,
       ValueChanged<String> onFieldSubmitted) {
@@ -204,6 +216,7 @@ class AddMenuPageState extends State<AddMenuPage> {
             contentPadding: const EdgeInsets.all(16),
             content: TextFormField(
               autofocus: true,
+              initialValue: initialValue,
               textInputAction: TextInputAction.done,
               decoration: const InputDecoration(
                 labelText: 'Scheme Name',
